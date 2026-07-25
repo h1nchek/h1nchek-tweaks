@@ -26,3 +26,8 @@ WebUI: тёмная тема, карточки, toggles, лог операций
 ### v4.0
 Улучшен вывод установки (customize.sh): ABI, проверка API, сохранение config.sh при обновлении.
 WebUI: добавлен выбор профиля.
+
+### v5.0
+Добавлены: busybox (arm/arm64, лишний удаляется при установке), actions.sh (kill mediaserver, clear RAM).
+Совместимость с APatch (поиск модуля по нескольким путям в WebUI и customize.sh).
+WebUI: нейтральный тёмный/светлый по prefers-color-scheme, system font, iOS-style toggles, кнопки действий.
