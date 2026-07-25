@@ -1,0 +1,13 @@
+persist.sys.ui.hw=1
+debug.sf.disable_backpressure=1
+debug.hwui.render_dirty_regions=false
+ro.sys.fw.bg_apps_limit=8
+persist.sys.gpu.debug.level=0
+net.tcp.default_init_rwnd=60
+ro.debuggable=0
+ro.secure=1
+ro.adb.secure=1
+persist.sys.usb.config=none
+ro.build.type=user
+persist.sys.assert.panic=0
+persist.log.tag=S
