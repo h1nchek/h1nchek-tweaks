@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>h1nchek Tweaks</title>
+<style>
+  body { background:#111; color:#eee; font-family:sans-serif; font-size:14px; padding:16px; }
+  h2 { font-size:16px; margin:16px 0 8px; border-bottom:1px solid #333; padding-bottom:4px; }
+  label { display:flex; justify-content:space-between; align-items:center; padding:6px 0; }
+  select, input[type=text] { background:#222; color:#eee; border:1px solid #444; padding:4px 8px; }
+  .btns { display:flex; gap:8px; margin-top:16px; }
+  button { flex:1; padding:10px; background:#222; color:#eee; border:1px solid #444; cursor:pointer; }
+  button.primary { border-color:#0af; color:#0af; }
+  #status { margin-top:8px; font-size:12px; color:#888; }
+</style>
+</head>
+<body>
+<h1 style="font-size:18px">h1nchek Tweaks</h1>
+
+<h2>Производительность</h2>
+<label>Анимации
+  <select id="ANIM_SCALE">
+    <option value="0">0 — выкл</option>
+    <option value="0.5">0.5</option>
+    <option value="1">1 — стандарт</option>
+  </select>
+</label>
+<label>App Standby <input type="checkbox" id="DOZE_ENABLED"></label>
+<label>Adaptive Battery <input type="checkbox" id="ADAPTIVE_BATTERY"></label>
+
+<h2>Сеть</h2>
+<label>Private DNS <input type="text" id="DNS_HOST" placeholder="one.one.one.one" style="width:160px"></label>
+<label>TCP Fast Open <input type="checkbox" id="TCP_FASTOPEN"></label>
+
+<h2>Приватность</h2>
+<label>Debug props off <input type="checkbox" id="DEBUG_PROPS_OFF"></label>
+<label>Usage stats <input type="checkbox" id="USAGE_STATS"></label>
+
+<div class="btns">
+  <button id="btnReload">Обновить</button>
+  <button class="primary" id="btnApply">Сохранить и применить</button>
+</div>
+<div id="status"></div>
+
+<script>
+const MODDIR="/data/adb/modules/h1nchek_tweaks";
+function runShell(cmd){return new Promise((res,rej)=>{try{if(window.ksu&&window.ksu.exec){const cb="cb_"+Date.now();window[cb]=(c,o,e)=>{delete window[cb];c===0?res(o):rej(e||"exit "+c)};window.ksu.exec(cmd,"{}",cb);return}if(window.mmrl){window.mmrl.exec(cmd).then(res).catch(rej);return}rej("нет бриджа")}catch(e){rej(String(e))}})}
+function parseConfig(t){const m={};t.split("\n").forEach(l=>{l=l.trim();if(!l||l[0]==="#")return;const i=l.indexOf("=");if(i<0)return;m[l.slice(0,i)]=l.slice(i+1)});return m}
+function g(id){return document.getElementById(id)}
+function load(){g("status").textContent="Загрузка...";runShell("cat "+MODDIR+"/config.sh").then(t=>{const c=parseConfig(t);g("ANIM_SCALE").value=c.ANIM_SCALE??"0.5";g("DOZE_ENABLED").checked=c.DOZE_ENABLED==="1";g("ADAPTIVE_BATTERY").checked=c.ADAPTIVE_BATTERY==="1";g("DNS_HOST").value=c.DNS_HOST??"one.one.one.one";g("TCP_FASTOPEN").checked=c.TCP_FASTOPEN==="1";g("DEBUG_PROPS_OFF").checked=c.DEBUG_PROPS_OFF==="1";g("USAGE_STATS").checked=c.USAGE_STATS==="1";g("status").textContent="Загружено."}).catch(e=>g("status").textContent="Ошибка: "+e)}
+function b(id){return g(id).checked?"1":"0"}
+function v(id){return g(id).value}
+function save(){const cfg=["ANIM_SCALE="+v("ANIM_SCALE"),"DOZE_ENABLED="+b("DOZE_ENABLED"),"DOZE_AGGRESSIVE=0","ADAPTIVE_BATTERY="+b("ADAPTIVE_BATTERY"),"DNS_MODE=hostname","DNS_HOST="+v("DNS_HOST"),"TCP_FASTOPEN="+b("TCP_FASTOPEN"),"DEBUG_PROPS_OFF="+b("DEBUG_PROPS_OFF"),"USAGE_STATS="+b("USAGE_STATS"),"CPU_GOV=schedutil","SWAPPINESS=60","GPU_RENDERER=skiagl",""].join("\n");const e=cfg.replace(/'/g,"'\\''");g("status").textContent="Сохраняю...";runShell("printf '%s' '"+e+"' > "+MODDIR+"/config.sh").then(()=>runShell("sh "+MODDIR+"/apply.sh")).then(o=>g("status").textContent="Применено: "+o.trim()).catch(e=>g("status").textContent="Ошибка: "+e)}
+g("btnReload").onclick=load;g("btnApply").onclick=save;
+load();
+</script>
+</body>
+</html>
