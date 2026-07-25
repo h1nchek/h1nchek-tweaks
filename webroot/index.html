@@ -8,14 +8,13 @@
   :root { --bg:#121212; --card:#1e1e1e; --fg:#e0e0e0; --dim:#888; --border:#2e2e2e; --accent:#5c9eff; --err:#ff5555; --ok:#5cffa0; }
   * { box-sizing:border-box; }
   body { background:var(--bg); color:var(--fg); font-family:sans-serif; font-size:14px; margin:0; padding:12px 12px 80px; }
-  h1 { font-size:17px; margin:0 0 4px; }
+  h1 { font-size:17px; margin:0 0 2px; }
   .sub { color:var(--dim); font-size:12px; margin-bottom:16px; }
   .card { background:var(--card); border-radius:8px; padding:4px 12px; margin-bottom:12px; }
   .cap { font-size:11px; text-transform:uppercase; color:var(--dim); padding:10px 0 4px; letter-spacing:.5px; }
-  .row { display:flex; justify-content:space-between; align-items:center; padding:9px 0; border-bottom:1px solid var(--border); }
+  .row { display:flex; justify-content:space-between; align-items:center; padding:9px 0; border-bottom:1px solid var(--border); gap:8px; }
   .row:last-child { border-bottom:none; }
-  .lbl { flex:1; }
-  .hint { display:block; font-size:10px; color:var(--dim); }
+  .lbl { flex:1; } .hint { display:block; font-size:10px; color:var(--dim); }
   select, input[type=text], input[type=number] { background:var(--bg); color:var(--fg); border:1px solid var(--border); border-radius:4px; padding:4px 8px; font-size:13px; }
   input[type=number] { width:60px; }
   .sw { position:relative; width:40px; height:22px; }
@@ -34,7 +33,12 @@
 </head>
 <body>
 <h1>h1nchek Tweaks</h1>
-<div class="sub">v3.0</div>
+<div class="sub">v4.0</div>
+
+<div class="card">
+  <div class="cap">Профиль</div>
+  <div class="row"><span class="lbl">Пресет</span><select id="PROFILE"><option value="custom">Custom</option><option value="gaming">Gaming</option><option value="battery">Battery</option><option value="balanced">Balanced</option></select></div>
+</div>
 
 <div class="card">
   <div class="cap">CPU / Память / Рендер</div>
@@ -77,11 +81,11 @@ const CONFIG=MODDIR+"/config.sh",DEFAULTS=MODDIR+"/config.sh.default";
 function log(msg,cls){const el=document.getElementById("log"),t=new Date().toTimeString().slice(0,8),d=document.createElement("div");if(cls)d.className=cls;d.textContent="["+t+"] "+msg;el.prepend(d)}
 function parse(t){const m={};t.split("\n").forEach(l=>{l=l.trim();if(!l||l[0]==="#")return;const i=l.indexOf("=");if(i<0)return;m[l.slice(0,i)]=l.slice(i+1)});return m}
 function g(id){return document.getElementById(id)}
-function fill(cfg){g("CPU_GOV").value=cfg.CPU_GOV??"schedutil";g("SWAPPINESS").value=cfg.SWAPPINESS??"60";g("GPU_RENDERER").value=cfg.GPU_RENDERER??"skiagl";g("ANIM_SCALE").value=cfg.ANIM_SCALE??"0.5";g("DOZE_ENABLED").checked=cfg.DOZE_ENABLED==="1";g("DOZE_AGGRESSIVE").checked=cfg.DOZE_AGGRESSIVE==="1";g("ADAPTIVE_BATTERY").checked=cfg.ADAPTIVE_BATTERY==="1";g("DNS_HOST").value=cfg.DNS_HOST??"one.one.one.one";g("TCP_FASTOPEN").checked=cfg.TCP_FASTOPEN==="1";g("DEBUG_PROPS_OFF").checked=cfg.DEBUG_PROPS_OFF==="1";g("USAGE_STATS").checked=cfg.USAGE_STATS==="1"}
+function fill(cfg){g("PROFILE").value=cfg.PROFILE??"custom";g("CPU_GOV").value=cfg.CPU_GOV??"schedutil";g("SWAPPINESS").value=cfg.SWAPPINESS??"60";g("GPU_RENDERER").value=cfg.GPU_RENDERER??"skiagl";g("ANIM_SCALE").value=cfg.ANIM_SCALE??"0.5";g("DOZE_ENABLED").checked=cfg.DOZE_ENABLED==="1";g("DOZE_AGGRESSIVE").checked=cfg.DOZE_AGGRESSIVE==="1";g("ADAPTIVE_BATTERY").checked=cfg.ADAPTIVE_BATTERY==="1";g("DNS_HOST").value=cfg.DNS_HOST??"one.one.one.one";g("TCP_FASTOPEN").checked=cfg.TCP_FASTOPEN==="1";g("DEBUG_PROPS_OFF").checked=cfg.DEBUG_PROPS_OFF==="1";g("USAGE_STATS").checked=cfg.USAGE_STATS==="1"}
 function load(){log("reading...");runShell("cat "+CONFIG).then(t=>{fill(parse(t));log("loaded","ok")}).catch(e=>log("error: "+e,"err"))}
 function b(id){return g(id).checked?"1":"0"}
 function v(id){return g(id).value}
-function save(){const cfg=["PROFILE=custom","ANIM_SCALE="+v("ANIM_SCALE"),"DOZE_ENABLED="+b("DOZE_ENABLED"),"DOZE_AGGRESSIVE="+b("DOZE_AGGRESSIVE"),"ADAPTIVE_BATTERY="+b("ADAPTIVE_BATTERY"),"DNS_MODE=hostname","DNS_HOST="+v("DNS_HOST"),"TCP_FASTOPEN="+b("TCP_FASTOPEN"),"DEBUG_PROPS_OFF="+b("DEBUG_PROPS_OFF"),"USAGE_STATS="+b("USAGE_STATS"),"CPU_GOV="+v("CPU_GOV"),"SWAPPINESS="+v("SWAPPINESS"),"GPU_RENDERER="+v("GPU_RENDERER"),""].join("\n");const e=cfg.replace(/'/g,"'\\''");log("saving...");runShell("printf '%s' '"+e+"' > "+CONFIG).then(()=>runShell("sh "+MODDIR+"/apply.sh")).then(o=>log(o.trim(),"ok")).catch(e=>log("error: "+e,"err"))}
+function save(){const cfg=["PROFILE="+v("PROFILE"),"ANIM_SCALE="+v("ANIM_SCALE"),"DOZE_ENABLED="+b("DOZE_ENABLED"),"DOZE_AGGRESSIVE="+b("DOZE_AGGRESSIVE"),"ADAPTIVE_BATTERY="+b("ADAPTIVE_BATTERY"),"DNS_MODE=hostname","DNS_HOST="+v("DNS_HOST"),"TCP_FASTOPEN="+b("TCP_FASTOPEN"),"DEBUG_PROPS_OFF="+b("DEBUG_PROPS_OFF"),"USAGE_STATS="+b("USAGE_STATS"),"CPU_GOV="+v("CPU_GOV"),"SWAPPINESS="+v("SWAPPINESS"),"GPU_RENDERER="+v("GPU_RENDERER"),""].join("\n");const e=cfg.replace(/'/g,"'\\''");log("saving...");runShell("printf '%s' '"+e+"' > "+CONFIG).then(()=>runShell("sh "+MODDIR+"/apply.sh")).then(o=>log(o.trim(),"ok")).catch(e=>log("error: "+e,"err"))}
 function reset(){runShell("cat "+DEFAULTS).then(t=>{fill(parse(t));log("reset","ok")}).catch(e=>log("error: "+e,"err"))}
 g("btnReload").onclick=load;g("btnApply").onclick=save;g("btnReset").onclick=reset;
 load();

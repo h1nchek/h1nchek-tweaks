@@ -22,3 +22,7 @@ Magisk-модуль с твиками производительности, се
 ### v3.0
 Добавлены: cpu governor, swappiness, gpu renderer, aggressive doze, профили (gaming/battery/balanced).
 WebUI: тёмная тема, карточки, toggles, лог операций, кнопка сброса к дефолтам.
+
+### v4.0
+Улучшен вывод установки (customize.sh): ABI, проверка API, сохранение config.sh при обновлении.
+WebUI: добавлен выбор профиля.
