@@ -31,3 +31,10 @@ WebUI: добавлен выбор профиля.
 Добавлены: busybox (arm/arm64, лишний удаляется при установке), actions.sh (kill mediaserver, clear RAM).
 Совместимость с APatch (поиск модуля по нескольким путям в WebUI и customize.sh).
 WebUI: нейтральный тёмный/светлый по prefers-color-scheme, system font, iOS-style toggles, кнопки действий.
+
+### v6.0
+Исправлена совместимость с Android 14/15 (бутлуп на некоторых прошивках):
+- убран system.prop с безусловными ro.secure/ro.debuggable/ro.build.type — раньше применялись на каждой загрузке в обход настроек
+- убрано принудительное отключение USB (persist.sys.usb.config=none) из post-fs-data.sh — блокировало ADB-восстановление
+- DEBUG_PROPS_OFF по умолчанию выключен
+- добавлена защита от бутлупа: post-fs-data.sh ставит метку .boot_pending, service.sh снимает её после успешной загрузки. Если система не догрузилась (метка осталась) — модуль создаёт файл disable и сам отключается на следующем старте, без ручного вмешательства через recovery

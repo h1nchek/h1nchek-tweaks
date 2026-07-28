@@ -1,6 +1,6 @@
 id=h1nchek_tweaks
 name=h1nchek Tweaks
-version=v5.0
-versionCode=5
+version=v6.0
+versionCode=6
 author=h1nchek
-description=Твики: производительность, сеть, приватность
+description=Твики: cpu governor, swappiness, gpu renderer, doze, сеть, приватность, профили, busybox, kill mediaserver/clear ram. Защита от бутлупа (watchdog).

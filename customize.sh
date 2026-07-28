@@ -1,5 +1,5 @@
 SKIPUNZIP=0
-ui_print "- h1nchek_tweaks v5.0"
+ui_print "- h1nchek_tweaks v6.0"
 ui_print "- Device: $(getprop ro.product.model)"
 ui_print "- Android: $(getprop ro.build.version.release) (SDK $(getprop ro.build.version.sdk))"
 ui_print "- ABI: $ARCH"
@@ -32,4 +32,5 @@ for d in /data/adb/modules /data/adb/ap/modules /data/adb/ksu/modules; do
   fi
 done
 
+ui_print "- Защита от бутлупа: если система не догрузится, модуль отключит себя на следующей загрузке"
 ui_print "- Готово, нужна перезагрузка"
