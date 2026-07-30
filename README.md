@@ -38,3 +38,9 @@ WebUI: нейтральный тёмный/светлый по prefers-color-sch
 - убрано принудительное отключение USB (persist.sys.usb.config=none) из post-fs-data.sh — блокировало ADB-восстановление
 - DEBUG_PROPS_OFF по умолчанию выключен
 - добавлена защита от бутлупа: post-fs-data.sh ставит метку .boot_pending, service.sh снимает её после успешной загрузки. Если система не догрузилась (метка осталась) — модуль создаёт файл disable и сам отключается на следующем старте, без ручного вмешательства через recovery
+
+### v7.0
+Inter-module compatibility: checks if another module already manages CPU governor, DNS, or animations before applying; skips if managed elsewhere (configurable via MANAGE_CPU/MANAGE_DNS/MANAGE_ANIM/MANAGE_DOZE flags).
+New tweaks: ZRAM writeback, heap growth limit override, WiFi scan throttle, thermal mode.
+WebUI: EN/RU language toggle (persisted in localStorage), full settings exposure including per-feature manage flags.
+All output in English.
