@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -10,11 +10,13 @@
     --card: #ffffff;
     --fg: #1c1c1e;
     --dim: #8e8e93;
-    --border: #d1d1d6;
+    --border: rgba(60,60,67,.12);
     --accent: #007aff;
     --danger: #ff3b30;
     --ok: #34c759;
+    --warn: #ff9500;
     --input-bg: #f2f2f7;
+    --separator: rgba(60,60,67,.12);
   }
   @media (prefers-color-scheme: dark) {
     :root {
@@ -22,14 +24,16 @@
       --card: #2c2c2e;
       --fg: #ffffff;
       --dim: #8e8e93;
-      --border: #3a3a3c;
+      --border: rgba(255,255,255,.08);
       --accent: #0a84ff;
       --danger: #ff453a;
       --ok: #32d74b;
+      --warn: #ff9f0a;
       --input-bg: #3a3a3c;
+      --separator: rgba(255,255,255,.08);
     }
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   body {
     background: var(--bg);
     color: var(--fg);
@@ -37,17 +41,34 @@
     font-size: 15px;
     padding-bottom: 80px;
   }
+
   .header {
-    padding: 16px 16px 8px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 20px 16px 8px;
   }
-  .header h1 { font-size: 22px; font-weight: 700; }
-  .header p { font-size: 13px; color: var(--dim); margin-top: 2px; }
+  .header-text h1 { font-size: 22px; font-weight: 700; }
+  .header-text p { font-size: 12px; color: var(--dim); margin-top: 2px; }
+  .lang-btn {
+    background: var(--input-bg);
+    border: none;
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 13px;
+    font-family: inherit;
+    color: var(--accent);
+    cursor: pointer;
+    flex-shrink: 0;
+    margin-top: 4px;
+  }
+  .lang-btn:active { opacity: .6; }
 
   .section { margin: 16px 16px 0; }
   .section-title {
     font-size: 12px;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.4px;
     color: var(--dim);
     margin-bottom: 6px;
     padding: 0 4px;
@@ -62,12 +83,14 @@
     align-items: center;
     justify-content: space-between;
     padding: 12px 16px;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid var(--separator);
     gap: 12px;
+    min-height: 48px;
   }
   .row:last-child { border-bottom: none; }
-  .row-label { flex: 1; }
-  .row-label small { display: block; font-size: 12px; color: var(--dim); margin-top: 1px; }
+  .row-label { flex: 1; line-height: 1.3; }
+  .row-label small { display: block; font-size: 11px; color: var(--dim); margin-top: 2px; }
+  .row-label .warn-text { color: var(--warn); }
 
   select, input[type=text], input[type=number] {
     background: var(--input-bg);
@@ -78,35 +101,32 @@
     font-size: 14px;
     font-family: inherit;
     outline: none;
-    min-width: 0;
-  }
-  select { max-width: 160px; }
-  input[type=number] { width: 70px; text-align: center; }
-  input[type=text] { max-width: 160px; }
-
-  .toggle {
-    position: relative;
-    width: 51px;
-    height: 31px;
     flex-shrink: 0;
   }
+  select { max-width: 160px; }
+  input[type=number] { width: 68px; text-align: center; }
+  input[type=text] { max-width: 160px; }
+
+  .toggle { position: relative; width: 51px; height: 31px; flex-shrink: 0; }
   .toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
   .track {
-    position: absolute;
-    inset: 0;
+    position: absolute; inset: 0;
     background: var(--border);
     border-radius: 31px;
     transition: background .2s;
     cursor: pointer;
+    border: 2px solid rgba(0,0,0,.04);
+    background: #e5e5ea;
   }
+  @media (prefers-color-scheme: dark) { .track { background: #39393d; } }
   .track:before {
     content: '';
     position: absolute;
     width: 27px; height: 27px;
-    left: 2px; top: 2px;
+    left: 0px; top: 0px;
     background: #fff;
     border-radius: 50%;
-    box-shadow: 0 1px 3px rgba(0,0,0,.3);
+    box-shadow: 0 2px 4px rgba(0,0,0,.3);
     transition: transform .2s;
   }
   .toggle input:checked + .track { background: var(--accent); }
@@ -117,11 +137,12 @@
     color: var(--accent);
     border: none;
     border-radius: 8px;
-    padding: 6px 14px;
+    padding: 7px 14px;
     font-size: 14px;
     font-family: inherit;
     cursor: pointer;
     flex-shrink: 0;
+    white-space: nowrap;
   }
   .action-btn:active { opacity: .6; }
 
@@ -129,11 +150,11 @@
     position: fixed;
     bottom: 0; left: 0; right: 0;
     background: var(--card);
-    border-top: 1px solid var(--border);
+    border-top: 1px solid var(--separator);
     padding: 10px 16px;
+    padding-bottom: max(10px, env(safe-area-inset-bottom));
     display: flex;
     gap: 10px;
-    padding-bottom: max(10px, env(safe-area-inset-bottom));
   }
   .btn {
     flex: 1;
@@ -146,35 +167,39 @@
     border: none;
   }
   .btn-secondary { background: var(--input-bg); color: var(--fg); }
-  .btn-danger { background: var(--input-bg); color: var(--danger); }
-  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-danger    { background: var(--input-bg); color: var(--danger); }
+  .btn-primary   { background: var(--accent); color: #fff; }
   .btn:active { opacity: .7; }
 
-  .log-section { margin: 12px 16px 0; }
+  .log-wrap { margin: 10px 16px 0; }
   #log {
-    font-size: 12px;
+    font-size: 11px;
     font-family: 'Menlo', 'Courier New', monospace;
     color: var(--dim);
-    max-height: 100px;
+    max-height: 90px;
     overflow-y: auto;
-    padding: 4px 0;
   }
-  #log .ok { color: var(--ok); }
-  #log .err { color: var(--danger); }
+  #log div { padding: 1px 0; }
+  .ok  { color: var(--ok) !important; }
+  .err { color: var(--danger) !important; }
+  .wrn { color: var(--warn) !important; }
 </style>
 </head>
 <body>
 
 <div class="header">
-  <h1>h1nchek Tweaks</h1>
-  <p>v6.0</p>
+  <div class="header-text">
+    <h1>h1nchek Tweaks</h1>
+    <p>v7.0</p>
+  </div>
+  <button class="lang-btn" id="btnLang">RU</button>
 </div>
 
 <div class="section">
-  <div class="section-title">Профиль</div>
+  <div class="section-title" data-t="profile">Profile</div>
   <div class="card">
     <div class="row">
-      <div class="row-label">Пресет</div>
+      <div class="row-label" data-t="preset">Preset</div>
       <select id="PROFILE">
         <option value="custom">Custom</option>
         <option value="gaming">Gaming</option>
@@ -186,10 +211,17 @@
 </div>
 
 <div class="section">
-  <div class="section-title">CPU / Память / Рендер</div>
+  <div class="section-title" data-t="cpu_section">CPU / Memory / Render</div>
   <div class="card">
     <div class="row">
-      <div class="row-label">CPU Governor</div>
+      <div class="row-label">
+        <span data-t="cpu_gov">CPU Governor</span>
+        <small data-t="cpu_gov_hint">Managed by another module if unchecked</small>
+      </div>
+      <label class="toggle"><input type="checkbox" id="MANAGE_CPU"><span class="track"></span></label>
+    </div>
+    <div class="row" id="row_cpu_gov">
+      <div class="row-label" data-t="governor">Governor</div>
       <select id="CPU_GOV">
         <option value="performance">performance</option>
         <option value="schedutil">schedutil</option>
@@ -198,138 +230,258 @@
       </select>
     </div>
     <div class="row">
-      <div class="row-label">Swappiness<small>0–100, меньше = реже своп</small></div>
+      <div class="row-label">
+        <span data-t="swappiness">Swappiness</span>
+        <small data-t="swappiness_hint">0–100, lower = less swap usage</small>
+      </div>
       <input type="number" id="SWAPPINESS" min="0" max="100">
     </div>
     <div class="row">
-      <div class="row-label">GPU Renderer</div>
+      <div class="row-label">
+        <span data-t="zram_wb">ZRAM Writeback</span>
+        <small data-t="zram_wb_hint">Offload idle ZRAM pages to flash (kernel support required)</small>
+      </div>
+      <label class="toggle"><input type="checkbox" id="ZRAM_WRITEBACK"><span class="track"></span></label>
+    </div>
+    <div class="row">
+      <div class="row-label">
+        <span data-t="heap">Heap Growth Limit</span>
+        <small data-t="heap_hint">Raise dalvik heap limit to 256MB</small>
+      </div>
+      <label class="toggle"><input type="checkbox" id="HEAP_GROWTH_LIMIT"><span class="track"></span></label>
+    </div>
+    <div class="row">
+      <div class="row-label" data-t="gpu_renderer">GPU Renderer</div>
       <select id="GPU_RENDERER">
-        <option value="skiagl">skiagl</option>
+        <option value="skiagl">skiagl (GL)</option>
         <option value="skiavk">skiavk (Vulkan)</option>
-        <option value="skiacpu">skiacpu</option>
+        <option value="skiacpu">skiacpu (CPU)</option>
+      </select>
+    </div>
+    <div class="row">
+      <div class="row-label">
+        <span data-t="thermal">Thermal Mode</span>
+        <small data-t="thermal_hint">Requires /sys/class/thermal/thermal_message/sconfig</small>
+      </div>
+      <select id="THERMAL_MODE">
+        <option value="0" data-t="thermal_default">Default</option>
+        <option value="1" data-t="thermal_perf">Performance</option>
+        <option value="2" data-t="thermal_battery">Battery saver</option>
       </select>
     </div>
   </div>
 </div>
 
 <div class="section">
-  <div class="section-title">Анимации / Doze</div>
+  <div class="section-title" data-t="anim_section">Animations / Doze</div>
   <div class="card">
     <div class="row">
-      <div class="row-label">Скорость анимаций</div>
+      <div class="row-label" data-t="manage_anim">Manage Animations</div>
+      <label class="toggle"><input type="checkbox" id="MANAGE_ANIM"><span class="track"></span></label>
+    </div>
+    <div class="row" id="row_anim_scale">
+      <div class="row-label">
+        <span data-t="anim_scale">Animation Scale</span>
+      </div>
       <select id="ANIM_SCALE">
-        <option value="0">Выкл</option>
+        <option value="0" data-t="anim_off">Off</option>
         <option value="0.5">×0.5</option>
         <option value="1">×1.0</option>
       </select>
     </div>
     <div class="row">
-      <div class="row-label">App Standby</div>
+      <div class="row-label" data-t="manage_doze">Manage Doze</div>
+      <label class="toggle"><input type="checkbox" id="MANAGE_DOZE"><span class="track"></span></label>
+    </div>
+    <div class="row">
+      <div class="row-label" data-t="app_standby">App Standby</div>
       <label class="toggle"><input type="checkbox" id="DOZE_ENABLED"><span class="track"></span></label>
     </div>
     <div class="row">
-      <div class="row-label">Aggressive Doze<small>Укороченные тайминги idle</small></div>
+      <div class="row-label">
+        <span data-t="agg_doze">Aggressive Doze</span>
+        <small data-t="agg_doze_hint">Shorter idle timings</small>
+      </div>
       <label class="toggle"><input type="checkbox" id="DOZE_AGGRESSIVE"><span class="track"></span></label>
     </div>
     <div class="row">
-      <div class="row-label">Adaptive Battery</div>
+      <div class="row-label" data-t="adapt_battery">Adaptive Battery</div>
       <label class="toggle"><input type="checkbox" id="ADAPTIVE_BATTERY"><span class="track"></span></label>
     </div>
   </div>
 </div>
 
 <div class="section">
-  <div class="section-title">Сеть</div>
+  <div class="section-title" data-t="net_section">Network</div>
   <div class="card">
     <div class="row">
-      <div class="row-label">Private DNS</div>
+      <div class="row-label" data-t="manage_dns">Manage Private DNS</div>
+      <label class="toggle"><input type="checkbox" id="MANAGE_DNS"><span class="track"></span></label>
+    </div>
+    <div class="row" id="row_dns">
+      <div class="row-label" data-t="dns_host">DNS Host</div>
       <input type="text" id="DNS_HOST" placeholder="one.one.one.one">
     </div>
     <div class="row">
-      <div class="row-label">TCP Fast Open</div>
+      <div class="row-label" data-t="tcp_fo">TCP Fast Open</div>
       <label class="toggle"><input type="checkbox" id="TCP_FASTOPEN"><span class="track"></span></label>
+    </div>
+    <div class="row">
+      <div class="row-label">
+        <span data-t="wifi_throttle">WiFi Scan Throttle</span>
+        <small data-t="wifi_throttle_hint">Reduce background WiFi scans</small>
+      </div>
+      <label class="toggle"><input type="checkbox" id="WIFI_SCAN_THROTTLE"><span class="track"></span></label>
     </div>
   </div>
 </div>
 
 <div class="section">
-  <div class="section-title">Приватность</div>
+  <div class="section-title" data-t="privacy_section">Privacy</div>
   <div class="card">
     <div class="row">
-      <div class="row-label">Отключить debug props<small>ro.debuggable=0, ro.secure=1 — риск бутлупа на некоторых прошивках</small></div>
+      <div class="row-label">
+        <span data-t="debug_props">Debug Props Off</span>
+        <small class="warn-text" data-t="debug_props_hint">ro.debuggable=0 — may cause bootloop on some ROMs</small>
+      </div>
       <label class="toggle"><input type="checkbox" id="DEBUG_PROPS_OFF"><span class="track"></span></label>
     </div>
     <div class="row">
-      <div class="row-label">Usage Stats</div>
+      <div class="row-label" data-t="usage_stats">Usage Stats</div>
       <label class="toggle"><input type="checkbox" id="USAGE_STATS"><span class="track"></span></label>
     </div>
   </div>
 </div>
 
 <div class="section">
-  <div class="section-title">Действия</div>
+  <div class="section-title" data-t="actions_section">Actions</div>
   <div class="card">
     <div class="row">
-      <div class="row-label">Kill Mediaserver</div>
-      <button class="action-btn" id="btnKillMS">Выполнить</button>
+      <div class="row-label" data-t="kill_ms">Kill Mediaserver</div>
+      <button class="action-btn" id="btnKillMS" data-t-btn="run">Run</button>
     </div>
     <div class="row">
-      <div class="row-label">Clear RAM</div>
-      <button class="action-btn" id="btnClearRAM">Выполнить</button>
+      <div class="row-label" data-t="clear_ram">Clear RAM</div>
+      <button class="action-btn" id="btnClearRAM" data-t-btn="run">Run</button>
     </div>
   </div>
 </div>
 
-<div class="log-section">
+<div class="log-wrap">
   <div id="log"></div>
 </div>
 
 <div class="bar">
-  <button class="btn btn-secondary" id="btnReload">Обновить</button>
-  <button class="btn btn-danger" id="btnReset">Сброс</button>
-  <button class="btn btn-primary" id="btnApply">Применить</button>
+  <button class="btn btn-secondary" id="btnReload" data-t-btn="reload">Reload</button>
+  <button class="btn btn-danger"    id="btnReset"  data-t-btn="reset">Reset</button>
+  <button class="btn btn-primary"   id="btnApply"  data-t-btn="apply">Apply</button>
 </div>
 
 <script>
-const MODDIR = (() => {
-  const base = "/data/adb";
-  for (const dir of ["modules", "ap/modules", "ksu/modules"]) {
-    try {
-      const p = base + "/" + dir + "/h1nchek_tweaks";
-      if (window.ksu) { return p; }
-    } catch(_) {}
+const STRINGS = {
+  en: {
+    profile:"Profile", preset:"Preset", cpu_section:"CPU / Memory / Render",
+    cpu_gov:"CPU Governor", cpu_gov_hint:"Managed by another module if unchecked",
+    governor:"Governor", swappiness:"Swappiness", swappiness_hint:"0–100, lower = less swap usage",
+    zram_wb:"ZRAM Writeback", zram_wb_hint:"Offload idle ZRAM pages to flash (kernel support required)",
+    heap:"Heap Growth Limit", heap_hint:"Raise dalvik heap limit to 256MB",
+    gpu_renderer:"GPU Renderer", thermal:"Thermal Mode", thermal_hint:"Requires /sys/class/thermal/thermal_message/sconfig",
+    thermal_default:"Default", thermal_perf:"Performance", thermal_battery:"Battery saver",
+    anim_section:"Animations / Doze", manage_anim:"Manage Animations",
+    anim_scale:"Animation Scale", anim_off:"Off",
+    manage_doze:"Manage Doze", app_standby:"App Standby",
+    agg_doze:"Aggressive Doze", agg_doze_hint:"Shorter idle timings",
+    adapt_battery:"Adaptive Battery",
+    net_section:"Network", manage_dns:"Manage Private DNS", dns_host:"DNS Host",
+    tcp_fo:"TCP Fast Open", wifi_throttle:"WiFi Scan Throttle",
+    wifi_throttle_hint:"Reduce background WiFi scans",
+    privacy_section:"Privacy", debug_props:"Debug Props Off",
+    debug_props_hint:"ro.debuggable=0 — may cause bootloop on some ROMs",
+    usage_stats:"Usage Stats",
+    actions_section:"Actions", kill_ms:"Kill Mediaserver", clear_ram:"Clear RAM",
+    run:"Run", reload:"Reload", reset:"Reset", apply:"Apply",
+    log_reading:"reading config...", log_loaded:"loaded",
+    log_saving:"saving...", log_applying:"applying...", log_applied:"applied",
+    log_reset:"reset to defaults", log_killing:"killing mediaserver...",
+    log_clearing:"clearing ram...", log_err:"error"
+  },
+  ru: {
+    profile:"Профиль", preset:"Пресет", cpu_section:"CPU / Память / Рендер",
+    cpu_gov:"CPU Governor", cpu_gov_hint:"Не трогать если управляет другой модуль",
+    governor:"Governor", swappiness:"Swappiness", swappiness_hint:"0–100, меньше = реже своп",
+    zram_wb:"ZRAM Writeback", zram_wb_hint:"Сброс простаивающих страниц ZRAM во flash (нужна поддержка ядра)",
+    heap:"Heap Growth Limit", heap_hint:"Поднять лимит dalvik heap до 256MB",
+    gpu_renderer:"GPU Renderer", thermal:"Тепловой режим", thermal_hint:"Требует /sys/class/thermal/thermal_message/sconfig",
+    thermal_default:"По умолчанию", thermal_perf:"Производительность", thermal_battery:"Экономия батареи",
+    anim_section:"Анимации / Doze", manage_anim:"Управлять анимациями",
+    anim_scale:"Скорость анимаций", anim_off:"Выкл",
+    manage_doze:"Управлять Doze", app_standby:"App Standby",
+    agg_doze:"Aggressive Doze", agg_doze_hint:"Короче тайминги ухода в idle",
+    adapt_battery:"Adaptive Battery",
+    net_section:"Сеть", manage_dns:"Управлять Private DNS", dns_host:"DNS хост",
+    tcp_fo:"TCP Fast Open", wifi_throttle:"WiFi Scan Throttle",
+    wifi_throttle_hint:"Уменьшить фоновые сканирования WiFi",
+    privacy_section:"Приватность", debug_props:"Отключить debug props",
+    debug_props_hint:"ro.debuggable=0 — риск бутлупа на некоторых прошивках",
+    usage_stats:"Usage Stats",
+    actions_section:"Действия", kill_ms:"Kill Mediaserver", clear_ram:"Очистить RAM",
+    run:"Выполнить", reload:"Обновить", reset:"Сброс", apply:"Применить",
+    log_reading:"чтение конфига...", log_loaded:"загружено",
+    log_saving:"сохраняю...", log_applying:"применяю...", log_applied:"применено",
+    log_reset:"сброс к дефолтам", log_killing:"завершаю mediaserver...",
+    log_clearing:"очистка RAM...", log_err:"ошибка"
   }
-  return base + "/modules/h1nchek_tweaks";
-})();
+};
 
-const CONFIG = MODDIR + "/config.sh";
-const DEFAULTS = MODDIR + "/config.sh.default";
+let lang = localStorage.getItem("lang") || "en";
+
+function t(key) { return STRINGS[lang][key] || key; }
+
+function applyLang() {
+  document.querySelectorAll("[data-t]").forEach(el => {
+    const key = el.getAttribute("data-t");
+    if (STRINGS[lang][key]) el.textContent = STRINGS[lang][key];
+  });
+  document.querySelectorAll("[data-t-btn]").forEach(el => {
+    const key = el.getAttribute("data-t-btn");
+    if (STRINGS[lang][key]) el.textContent = STRINGS[lang][key];
+  });
+  document.getElementById("btnLang").textContent = lang === "en" ? "RU" : "EN";
+}
+
+document.getElementById("btnLang").onclick = () => {
+  lang = lang === "en" ? "ru" : "en";
+  localStorage.setItem("lang", lang);
+  applyLang();
+};
+
+function detectModdir() {
+  return runShell(
+    'for d in /data/adb/modules /data/adb/ap/modules /data/adb/ksu/modules; do' +
+    ' [ -d "$d/h1nchek_tweaks" ] && echo "$d/h1nchek_tweaks" && break; done'
+  ).then(o => o.trim() || "/data/adb/modules/h1nchek_tweaks")
+   .catch(() => "/data/adb/modules/h1nchek_tweaks");
+}
+
+let MODDIR = "/data/adb/modules/h1nchek_tweaks";
 
 function runShell(cmd) {
-  return new Promise((resolve, reject) => {
+  return new Promise((res, rej) => {
     try {
       if (window.ksu && typeof window.ksu.exec === "function") {
         const cb = "cb_" + Date.now() + "_" + (Math.random() * 1e6 | 0);
-        window[cb] = (code, out, err) => { delete window[cb]; code === 0 ? resolve(out) : reject(err || "exit " + code); };
+        window[cb] = (c, o, e) => { delete window[cb]; c === 0 ? res(o) : rej(e || "exit " + c); };
         window.ksu.exec(cmd, "{}", cb);
         return;
       }
       if (window.mmrl && typeof window.mmrl.exec === "function") {
-        window.mmrl.exec(cmd).then(resolve).catch(reject);
+        window.mmrl.exec(cmd).then(res).catch(rej);
         return;
       }
-      reject("нет бриджа (ksu/mmrl)");
-    } catch(e) { reject(String(e)); }
+      rej("no bridge (ksu/mmrl)");
+    } catch(e) { rej(String(e)); }
   });
 }
-
-function detectModdir() {
-  return runShell('for d in /data/adb/modules /data/adb/ap/modules /data/adb/ksu/modules; do [ -d "$d/h1nchek_tweaks" ] && echo "$d/h1nchek_tweaks" && break; done')
-    .then(out => out.trim() || MODDIR)
-    .catch(() => MODDIR);
-}
-
-let resolvedModdir = MODDIR;
 
 function log(msg, cls) {
   const el = document.getElementById("log");
@@ -338,9 +490,10 @@ function log(msg, cls) {
   if (cls) d.className = cls;
   d.textContent = "[" + t + "] " + msg;
   el.prepend(d);
+  if (el.children.length > 20) el.removeChild(el.lastChild);
 }
 
-function parseConfig(text) {
+function parse(text) {
   const m = {};
   text.split("\n").forEach(l => {
     l = l.trim();
@@ -352,82 +505,97 @@ function parseConfig(text) {
   return m;
 }
 
-function applyToForm(cfg) {
-  const s = id => document.getElementById(id);
-  s("PROFILE").value      = cfg.PROFILE     ?? "custom";
-  s("CPU_GOV").value      = cfg.CPU_GOV     ?? "schedutil";
-  s("SWAPPINESS").value   = cfg.SWAPPINESS  ?? "60";
-  s("GPU_RENDERER").value = cfg.GPU_RENDERER ?? "skiagl";
-  s("ANIM_SCALE").value   = cfg.ANIM_SCALE  ?? "0.5";
-  s("DOZE_ENABLED").checked    = cfg.DOZE_ENABLED    === "1";
-  s("DOZE_AGGRESSIVE").checked = cfg.DOZE_AGGRESSIVE === "1";
-  s("ADAPTIVE_BATTERY").checked= cfg.ADAPTIVE_BATTERY=== "1";
-  s("DNS_HOST").value      = cfg.DNS_HOST   ?? "one.one.one.one";
-  s("TCP_FASTOPEN").checked    = cfg.TCP_FASTOPEN    === "1";
-  s("DEBUG_PROPS_OFF").checked = cfg.DEBUG_PROPS_OFF === "1";
-  s("USAGE_STATS").checked     = cfg.USAGE_STATS     === "1";
-}
-
-function loadConfig() {
-  log("reading config...");
-  runShell("cat " + resolvedModdir + "/config.sh")
-    .then(t => { applyToForm(parseConfig(t)); log("loaded", "ok"); })
-    .catch(e => log("error: " + e, "err"));
-}
-
 function g(id) { return document.getElementById(id); }
 function v(id) { return g(id).value; }
 function b(id) { return g(id).checked ? "1" : "0"; }
 
+function fill(cfg) {
+  g("PROFILE").value          = cfg.PROFILE           ?? "custom";
+  g("MANAGE_CPU").checked     = cfg.MANAGE_CPU         !== "0";
+  g("CPU_GOV").value          = cfg.CPU_GOV            ?? "schedutil";
+  g("SWAPPINESS").value       = cfg.SWAPPINESS         ?? "60";
+  g("ZRAM_WRITEBACK").checked = cfg.ZRAM_WRITEBACK      === "1";
+  g("HEAP_GROWTH_LIMIT").checked = cfg.HEAP_GROWTH_LIMIT === "1";
+  g("GPU_RENDERER").value     = cfg.GPU_RENDERER       ?? "skiagl";
+  g("THERMAL_MODE").value     = cfg.THERMAL_MODE       ?? "0";
+  g("MANAGE_ANIM").checked    = cfg.MANAGE_ANIM         !== "0";
+  g("ANIM_SCALE").value       = cfg.ANIM_SCALE         ?? "0.5";
+  g("MANAGE_DOZE").checked    = cfg.MANAGE_DOZE         !== "0";
+  g("DOZE_ENABLED").checked   = cfg.DOZE_ENABLED        === "1";
+  g("DOZE_AGGRESSIVE").checked= cfg.DOZE_AGGRESSIVE     === "1";
+  g("ADAPTIVE_BATTERY").checked= cfg.ADAPTIVE_BATTERY   === "1";
+  g("MANAGE_DNS").checked     = cfg.MANAGE_DNS          !== "0";
+  g("DNS_HOST").value         = cfg.DNS_HOST           ?? "one.one.one.one";
+  g("TCP_FASTOPEN").checked   = cfg.TCP_FASTOPEN        === "1";
+  g("WIFI_SCAN_THROTTLE").checked = cfg.WIFI_SCAN_THROTTLE === "1";
+  g("DEBUG_PROPS_OFF").checked= cfg.DEBUG_PROPS_OFF     === "1";
+  g("USAGE_STATS").checked    = cfg.USAGE_STATS         === "1";
+}
+
 function buildConfig() {
   return [
-    "PROFILE="        + v("PROFILE"),
-    "ANIM_SCALE="     + v("ANIM_SCALE"),
-    "DOZE_ENABLED="   + b("DOZE_ENABLED"),
-    "DOZE_AGGRESSIVE="+ b("DOZE_AGGRESSIVE"),
-    "ADAPTIVE_BATTERY="+ b("ADAPTIVE_BATTERY"),
+    "PROFILE="           + v("PROFILE"),
+    "MANAGE_CPU="        + b("MANAGE_CPU"),
+    "CPU_GOV="           + v("CPU_GOV"),
+    "SWAPPINESS="        + v("SWAPPINESS"),
+    "ZRAM_WRITEBACK="    + b("ZRAM_WRITEBACK"),
+    "HEAP_GROWTH_LIMIT=" + b("HEAP_GROWTH_LIMIT"),
+    "GPU_RENDERER="      + v("GPU_RENDERER"),
+    "THERMAL_MODE="      + v("THERMAL_MODE"),
+    "MANAGE_ANIM="       + b("MANAGE_ANIM"),
+    "ANIM_SCALE="        + v("ANIM_SCALE"),
+    "MANAGE_DOZE="       + b("MANAGE_DOZE"),
+    "DOZE_ENABLED="      + b("DOZE_ENABLED"),
+    "DOZE_AGGRESSIVE="   + b("DOZE_AGGRESSIVE"),
+    "ADAPTIVE_BATTERY="  + b("ADAPTIVE_BATTERY"),
+    "MANAGE_DNS="        + b("MANAGE_DNS"),
     "DNS_MODE=hostname",
-    "DNS_HOST="       + v("DNS_HOST"),
-    "TCP_FASTOPEN="   + b("TCP_FASTOPEN"),
-    "DEBUG_PROPS_OFF="+ b("DEBUG_PROPS_OFF"),
-    "USAGE_STATS="    + b("USAGE_STATS"),
-    "CPU_GOV="        + v("CPU_GOV"),
-    "SWAPPINESS="     + v("SWAPPINESS"),
-    "GPU_RENDERER="   + v("GPU_RENDERER"),
+    "DNS_HOST="          + v("DNS_HOST"),
+    "TCP_FASTOPEN="      + b("TCP_FASTOPEN"),
+    "WIFI_SCAN_THROTTLE="+ b("WIFI_SCAN_THROTTLE"),
+    "DEBUG_PROPS_OFF="   + b("DEBUG_PROPS_OFF"),
+    "USAGE_STATS="       + b("USAGE_STATS"),
     ""
   ].join("\n");
 }
 
+function loadConfig() {
+  log(t("log_reading"));
+  runShell("cat " + MODDIR + "/config.sh")
+    .then(text => { fill(parse(text)); log(t("log_loaded"), "ok"); })
+    .catch(e => log(t("log_err") + ": " + e, "err"));
+}
+
 function writeAndApply() {
   const escaped = buildConfig().replace(/'/g, "'\\''");
-  log("saving...");
-  runShell("printf '%s' '" + escaped + "' > " + resolvedModdir + "/config.sh")
-    .then(() => { log("applying..."); return runShell("sh " + resolvedModdir + "/apply.sh"); })
-    .then(out => log(out.trim(), "ok"))
-    .catch(e => log("error: " + e, "err"));
+  log(t("log_saving"));
+  runShell("printf '%s' '" + escaped + "' > " + MODDIR + "/config.sh")
+    .then(() => { log(t("log_applying")); return runShell("sh " + MODDIR + "/apply.sh"); })
+    .then(o => log(t("log_applied") + ": " + o.trim(), "ok"))
+    .catch(e => log(t("log_err") + ": " + e, "err"));
 }
 
 function resetDefaults() {
-  runShell("cat " + resolvedModdir + "/config.sh.default")
-    .then(t => { applyToForm(parseConfig(t)); log("reset to defaults", "ok"); })
-    .catch(e => log("error: " + e, "err"));
+  runShell("cat " + MODDIR + "/config.sh.default")
+    .then(text => { fill(parse(text)); log(t("log_reset"), "ok"); })
+    .catch(e => log(t("log_err") + ": " + e, "err"));
 }
 
 g("btnReload").onclick  = loadConfig;
 g("btnApply").onclick   = writeAndApply;
 g("btnReset").onclick   = resetDefaults;
 g("btnKillMS").onclick  = () => {
-  log("killing mediaserver...");
-  runShell("sh " + resolvedModdir + "/actions.sh killmediaserver")
-    .then(o => log(o.trim(), "ok")).catch(e => log("error: " + e, "err"));
+  log(t("log_killing"));
+  runShell("sh " + MODDIR + "/actions.sh killmediaserver")
+    .then(o => log(o.trim(), "ok")).catch(e => log(t("log_err") + ": " + e, "err"));
 };
 g("btnClearRAM").onclick = () => {
-  log("clearing ram...");
-  runShell("sh " + resolvedModdir + "/actions.sh clearram")
-    .then(o => log(o.trim(), "ok")).catch(e => log("error: " + e, "err"));
+  log(t("log_clearing"));
+  runShell("sh " + MODDIR + "/actions.sh clearram")
+    .then(o => log(o.trim(), "ok")).catch(e => log(t("log_err") + ": " + e, "err"));
 };
 
-detectModdir().then(d => { resolvedModdir = d; loadConfig(); });
+detectModdir().then(d => { MODDIR = d; applyLang(); loadConfig(); });
 </script>
 </body>
 </html>

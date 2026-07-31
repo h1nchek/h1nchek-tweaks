@@ -1,0 +1,30 @@
+# module runtime files
+.boot_pending
+disable
+remove
+update
+skip_mount
+
+# config overrides (personal settings)
+config.sh.local
+
+# build artifacts
+*.zip
+*.apk
+*.log
+
+# editors
+.vscode/
+.idea/
+*.swp
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# secrets (на всякий случай)
+*.pem
+*.key
+*.env
+.env*
